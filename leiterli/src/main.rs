@@ -1,8 +1,6 @@
+use leiterli::Dice;
 use leiterli::Play;
 use leiterli::Board;
-
-use rand::thread_rng;
-use rand::Rng;
 
 use clap::App;
 use clap::Arg;
@@ -32,9 +30,11 @@ fn main() {
             displaying the help information from --help or -h")
        .get_matches();
 
+    // number of games to be played
     let n = _matches.value_of("n_games").unwrap().parse::<usize>().unwrap();
     let mut moves = vec![0; n];
 
+    // the board
     let b = Board::new(&[
     	(2, 29),
     	(5, 21),
@@ -58,18 +58,21 @@ fn main() {
     	(122, 113),
     	(127, 107)]);
     
-    let mut rng = thread_rng();
+    // the dice to throw
+    let mut dice = Dice::new(1,6);
 
+    // the game is on
     for i in 0..n {
         let mut p = Play::new(&b);
         while !p.done() {
-            p.move_by(rng.gen_range(1, 7));
+            p.move_by(dice.throw());
         }
         moves[i] = p.moves;
     }
-    moves.sort();
-    
+
+    // do analysis
     let n_p = 20;
+    moves.sort();
     println!("{:?} -> {:?}", 0, *moves.first().unwrap());
     for i in 1..n_p {
         let p_i = (i as f64)/(n_p as f64);

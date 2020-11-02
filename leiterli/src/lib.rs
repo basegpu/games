@@ -1,4 +1,5 @@
 use std::cmp;
+use rand::Rng;
 
 const SIZE: usize = 130;
 
@@ -89,6 +90,29 @@ impl<'a> Play<'a> {
     }
 }
 
+pub struct Dice {
+    rng: rand::rngs::ThreadRng,
+    lower: usize,
+    upper: usize
+}
+
+impl Dice {
+    pub fn new(l: usize, u: usize) -> Self {
+        Dice {
+            rng: rand::thread_rng(),
+            lower: l,
+            upper: u
+        }
+    }
+}
+
+impl Dice {
+    pub fn throw(&mut self) -> usize {
+        return self.rng.gen_range(self.lower, self.upper+1);
+    }
+}
+
+
 #[test]
 fn board_without_jumps() {
     let b = Board::new(&[]);
@@ -168,4 +192,12 @@ fn play_to_end() {
     p.move_by(1);
     assert_eq!(p.done(), true);
     assert_eq!(p.moves, 1);
+}
+
+#[test]
+fn throw_dice() {
+    let mut d = Dice::new(1, 6);
+    let i = d.throw();
+    assert!(i >= 1);
+    assert!(i < 7);
 }
