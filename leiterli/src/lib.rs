@@ -1,5 +1,6 @@
 use std::cmp;
 use rand::Rng;
+use std::cmp::Ordering;
 
 const SIZE: usize = 130;
 
@@ -46,6 +47,7 @@ impl Board {
     }
 }
 
+
 pub struct Play<'a> {
     board: &'a Board,
     pub position: usize,
@@ -89,6 +91,27 @@ impl<'a> Play<'a> {
         return p as usize;
     }
 }
+
+impl<'a> Ord for Play<'a> {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.moves.cmp(&other.moves)
+    }
+}
+
+impl<'a> PartialOrd for Play<'a> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl<'a> Eq for Play<'a> { }
+
+impl<'a> PartialEq for Play<'a> {
+    fn eq(&self, other: &Self) -> bool {
+        self.moves == other.moves
+    }
+}
+
 
 pub struct Dice {
     rng: rand::rngs::ThreadRng,

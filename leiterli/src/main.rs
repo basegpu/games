@@ -32,52 +32,55 @@ fn main() {
 
     // number of games to be played
     let n = _matches.value_of("n_games").unwrap().parse::<usize>().unwrap();
-    let mut moves = vec![0; n];
 
     // the board
     let b = Board::new(&[
-    	(2, 29),
-    	(5, 21),
-    	(8, 6),
-    	(26, 1),
-    	(32, 31),
-    	(37, 40),
-    	(42, 16),
-    	(44, 43),
-    	(53, 49),
-    	(55, 81),
-    	(60, 95),
-    	(71, 47),
-    	(82, 72),
-    	(85, 110),
-    	(87, 115),
-    	(89, 64),
-    	(90, 117),
-    	(102, 77),
-    	(109, 99),
-    	(122, 113),
-    	(127, 107)]);
-    
+        (2, 29),
+        (5, 21),
+        (8, 6),
+        (26, 1),
+        (32, 31),
+        (37, 40),
+        (42, 16),
+        (44, 43),
+        (53, 49),
+        (55, 81),
+        (60, 95),
+        (71, 47),
+        (82, 72),
+        (85, 110),
+        (87, 115),
+        (89, 64),
+        (90, 117),
+        (102, 77),
+        (109, 99),
+        (122, 113),
+        (127, 107)]);
+
     // the dice to throw
     let mut dice = Dice::new(1,6);
 
+    // vector of games
+    let mut plays: Vec<Play> = Vec::new();
+    plays.reserve_exact(n);
+
     // the game is on
-    for i in 0..n {
+    for _i in 0..n {
         let mut p = Play::new(&b);
         while !p.done() {
             p.move_by(dice.throw());
         }
-        moves[i] = p.moves;
+        plays.push(p);
     }
 
     // do analysis
+    plays.sort();
     let n_p = 20;
-    moves.sort();
-    println!("{:?} -> {:?}", 0, *moves.first().unwrap());
+    println!("{:?} -> {:?}", 0, plays.first().unwrap().moves);
     for i in 1..n_p {
         let p_i = (i as f64)/(n_p as f64);
-        println!("{:?} -> {:?}", p_i, moves[(p_i * n as f64) as usize]);
+        println!("{:?} -> {:?}", p_i, plays[(p_i * n as f64) as usize].moves);
     }
-    println!("{:?} -> {:?}", 1, *moves.last().unwrap());
+    println!("{:?} -> {:?}", 1, plays.last().unwrap().moves);
     
 }
